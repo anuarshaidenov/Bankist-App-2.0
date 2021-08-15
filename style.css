@@ -4,6 +4,14 @@
  * Have fun! 😁
  */
 
+ .error {
+  color: red;
+  opacity: 0;
+  transition: all 0.3s;
+  margin-top: 5px;
+  text-align: center;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -37,10 +45,6 @@ nav {
 
 .logo {
   height: 5.25rem;
-}
-
-.login {
-  display: flex;
 }
 
 .login__input {
@@ -84,6 +88,7 @@ nav {
 }
 
 /* MAIN */
+
 .app {
   position: relative;
   max-width: 100rem;
