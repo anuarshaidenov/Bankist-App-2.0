@@ -174,6 +174,33 @@ const calcDisplaySummary = function (account) {
   labelSumInterest.textContent = `${formattedInterest}`;
 };
 
+const startTimer = function () {
+  if (timerGlobal) clearInterval(timerGlobal);
+  const tick = function () {
+    const min = `${Math.trunc(time / 60)}`.padStart(2, 0);
+    const sec = `${time % 60}`.padStart(2, 0);
+
+    // In each call print the remaining time to the UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // When the time is 0, stop the timer and log out
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+    time--;
+  };
+  // Set time to 5 minutes
+  let time = 240;
+
+  // Call the timer every second
+  tick();
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
+
 const updateUI = function (account) {
   // Display movements
   displayMovements(account);
@@ -183,6 +210,9 @@ const updateUI = function (account) {
 
   // Display summary
   calcDisplaySummary(account);
+
+  //Start timer
+  timerGlobal = startTimer();
 };
 
 const createUsernames = function (accs) {
@@ -197,12 +227,12 @@ const createUsernames = function (accs) {
 createUsernames(accounts);
 
 // Event handlers
-let currentAccount;
+let currentAccount, timerGlobal;
 
-// FAKE LOG IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 1;
+// // FAKE LOG IN
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 1;
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -307,13 +337,14 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
   const deposits = currentAccount.movements.filter(mov => mov > 0);
   if (amount && amount > 0 && deposits.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
-    currentAccount.movementsDates.push(new Date().toISOString());
-    // Update UI
-    updateUI(currentAccount);
-
     displayMessage('success');
+    setTimeout(function () {
+      // Add movement
+      currentAccount.movements.push(amount);
+      currentAccount.movementsDates.push(new Date().toISOString());
+      // Update UI
+      updateUI(currentAccount);
+    }, 3000);
   } else {
     displayMessage('error');
   }
@@ -352,6 +383,7 @@ btnClose.addEventListener('click', function (e) {
     // Log user out (Hide UI)
     containerApp.style.opacity = 0;
     labelWelcome.textContent = 'Log in to get started';
+    clearInterval(timerGlobal);
   } else {
     displayMessage('error');
   }
@@ -542,6 +574,7 @@ const calcYearsPassed = (date1, date2) =>
 console.log(calcYearsPassed(new Date(1998, 12, 31), new Date()));
 */
 
+/*
 const num = 3337837.23;
 
 const options = {
@@ -558,3 +591,26 @@ console.log(
   `${navigator.language}`,
   new Intl.NumberFormat(navigator.language, options).format(num)
 );
+*/
+
+/*
+const ingredients = ['olives', 'spinach'];
+const pizzaTimer = setTimeout(
+  (ing1, ing2) => console.log(`here is your pizza with ${ing1} and ${ing2} 🍕`),
+  3000,
+  ...ingredients
+);
+console.log('waiting...');
+
+if (ingredients.includes('spinach')) clearTimeout(pizzaTimer);
+
+// setTimeout
+setInterval(function () {
+  const now = new Date();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const sec = now.getSeconds();
+
+  console.log(`${hour}:${minute}:${sec}`);
+}, 1000);
+*/
